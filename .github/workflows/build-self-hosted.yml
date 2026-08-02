@@ -68,7 +68,7 @@ jobs:
       - name: Test
         id: ggml-ci
         run: |
-          nvidia-smi
+          rocm-smi
           GG_BUILD_CUDA=1 bash ./ci/run.sh ~/results/llama.cpp ~/mnt/llama.cpp
 
   gpu-vulkan-nvidia-cm:
