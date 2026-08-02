@@ -92,7 +92,13 @@ if [ ! -z ${GG_BUILD_CUDA} ]; then
 fi
 
 if [ ! -z ${GG_BUILD_ROCM} ]; then
-    CMAKE_EXTRA="${CMAKE_EXTRA} -DCMAKE_HIP_COMPILER=$(hipconfig -l)/clang -DGGML_HIP=ON -DGGML_HIP_ROCWMMA_FATTN=ON"
+    # BUILD_SHARED_LIBS defaults ON on Linux, which splits the backends into
+    # separate libggml-*.so. Those only export ggml_backend_init/score (so the
+    # loader can dlopen them) when built with GGML_BACKEND_DL; without it the
+    # runtime fails with "failed to find ggml_backend_init in libggml-cpu.so"
+    # and no device (CPU or gfx*) registers. Enable DL so the shared backends
+    # are discoverable.
+    CMAKE_EXTRA="${CMAKE_EXTRA} -DCMAKE_HIP_COMPILER=$(hipconfig -l)/clang -DGGML_HIP=ON -DGGML_HIP_ROCWMMA_FATTN=ON -DGGML_BACKEND_DL=ON"
     if [ -z ${GG_BUILD_AMDGPU_TARGETS} ]; then
         echo "Missing GG_BUILD_AMDGPU_TARGETS, please set it to your GPU architecture (e.g. gfx90a, gfx1100, etc.)"
         exit 1
