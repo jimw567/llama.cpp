@@ -97,8 +97,9 @@ if [ ! -z ${GG_BUILD_ROCM} ]; then
     # loader can dlopen them) when built with GGML_BACKEND_DL; without it the
     # runtime fails with "failed to find ggml_backend_init in libggml-cpu.so"
     # and no device (CPU or gfx*) registers. Enable DL so the shared backends
-    # are discoverable.
-    CMAKE_EXTRA="${CMAKE_EXTRA} -DCMAKE_HIP_COMPILER=$(hipconfig -l)/clang -DGGML_HIP=ON -DGGML_HIP_ROCWMMA_FATTN=ON -DGGML_BACKEND_DL=ON"
+    # are discoverable. GGML_BACKEND_DL requires GGML_NATIVE=OFF (the CPU
+    # feature check needs ARCH_DEFINITIONS, which GGML_NATIVE bypasses).
+    CMAKE_EXTRA="${CMAKE_EXTRA} -DCMAKE_HIP_COMPILER=$(hipconfig -l)/clang -DGGML_HIP=ON -DGGML_HIP_ROCWMMA_FATTN=ON -DGGML_BACKEND_DL=ON -DGGML_NATIVE=OFF"
     if [ -z ${GG_BUILD_AMDGPU_TARGETS} ]; then
         echo "Missing GG_BUILD_AMDGPU_TARGETS, please set it to your GPU architecture (e.g. gfx90a, gfx1100, etc.)"
         exit 1
